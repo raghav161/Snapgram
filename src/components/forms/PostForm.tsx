@@ -41,14 +41,11 @@ const PostForm = ({ post, action }: PostFormProps) => {
   });
 
   // Query
-  const { mutateAsync: createPost, isLoading: isLoadingCreate } =
-    useCreatePost();
-  const { mutateAsync: updatePost, isLoading: isLoadingUpdate } =
-    useUpdatePost();
+  const { mutateAsync: createPost, isLoading: isLoadingCreate } = useCreatePost();
+  const { mutateAsync: updatePost, isLoading: isLoadingUpdate } = useUpdatePost();
 
   // Handler
   const handleSubmit = async (value: z.infer<typeof PostValidation>) => {
-    // ACTION = UPDATE
     if (post && action === "Update") {
       const updatedPost = await updatePost({
         ...value,
@@ -84,23 +81,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-9 w-full  max-w-5xl">
-        <FormField
-          control={form.control}
-          name="caption"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="shad-form_label">Caption</FormLabel>
-              <FormControl>
-                <Textarea
-                  className="shad-textarea custom-scrollbar"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="shad-form_message" />
-            </FormItem>
-          )}
-        />
-
+    
         <FormField
           control={form.control}
           name="file"
@@ -111,6 +92,23 @@ const PostForm = ({ post, action }: PostFormProps) => {
                 <FileUploader
                   fieldChange={field.onChange}
                   mediaUrl={post?.imageUrl}
+                />
+              </FormControl>
+              <FormMessage className="shad-form_message" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="caption"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="shad-form_label">Caption</FormLabel>
+              <FormControl>
+                <Textarea
+                  className="shad-textarea custom-scrollbar"
+                  {...field}
                 />
               </FormControl>
               <FormMessage className="shad-form_message" />

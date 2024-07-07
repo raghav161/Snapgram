@@ -12,12 +12,14 @@ type FileUploaderProps = {
 const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
   const [file, setFile] = useState<File[]>([]);
   const [fileUrl, setFileUrl] = useState<string>(mediaUrl);
+  // const [fileType, setFileType] = useState<string>("");
 
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
       setFile(acceptedFiles);
       fieldChange(acceptedFiles);
       setFileUrl(convertFileToUrl(acceptedFiles[0]));
+      // setFileType(acceptedFiles[0].type);
     },
     [file]
   );
@@ -26,6 +28,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
     onDrop,
     accept: {
       "image/*": [".png", ".jpeg", ".jpg"],
+      // "video/mp4": [".mp4", ".MP4"]
     },
   });
 
@@ -39,11 +42,16 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
         <>
           <div className="flex flex-1 justify-center w-full p-5 lg:p-10">
             <img src={fileUrl} alt="image" className="file_uploader-img" />
+            {/* {fileType.startsWith("image/") ? (
+              <img src={fileUrl} alt="image" className="file_uploader-img" />
+            ) : (
+              <video src={fileUrl} controls className="file_uploader-video" />
+            )} */}
           </div>
-          <p className="file_uploader-label">Click or drag photo to replace</p>
+          <p className="file_uploader-label">Click or drag to replace</p>
         </>
       ) : (
-        <div className="file_uploader-box ">
+        <div className="file_uploader-box">
           <img
             src="/assets/icons/file-upload.svg"
             width={96}
