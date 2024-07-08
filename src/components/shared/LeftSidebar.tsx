@@ -66,7 +66,7 @@ const LeftSidebar = () => {
                 }`}>
                 <NavLink
                   to={link.route}
-                  className="flex gap-4 items-center p-4">
+                  className="flex gap-4 items-center p-2">
                   <img
                     src={link.imgURL}
                     alt={link.label}
