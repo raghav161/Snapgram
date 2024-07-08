@@ -1,14 +1,9 @@
+import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-
 import { Button } from "@/components/ui";
 import { Loader } from "@/components/shared";
 import { GridPostList, PostStats } from "@/components/shared";
-
-import {
-  useGetPostById,
-  useGetUserPosts,
-  useDeletePost,
-} from "@/lib/react-query/queries";
+import { useGetPostById, useGetUserPosts, useDeletePost } from "@/lib/react-query/queries";
 import { multiFormatDateString } from "@/lib/utils";
 import { useUserContext } from "@/context/AuthContext";
 
@@ -18,9 +13,7 @@ const PostDetails = () => {
   const { user } = useUserContext();
 
   const { data: post, isLoading } = useGetPostById(id);
-  const { data: userPosts, isLoading: isUserPostLoading } = useGetUserPosts(
-    post?.creator.$id
-  );
+  const { data: userPosts, isLoading: isUserPostLoading } = useGetUserPosts(post?.creator.$id);
   const { mutate: deletePost } = useDeletePost();
 
   const relatedPosts = userPosts?.documents.filter(
@@ -30,6 +23,16 @@ const PostDetails = () => {
   const handleDeletePost = () => {
     deletePost({ postId: id, imageId: post?.imageId });
     navigate(-1);
+  };
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleImageClick = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -57,6 +60,8 @@ const PostDetails = () => {
             src={post?.imageUrl}
             alt="creator"
             className="post_details-img"
+            onClick={handleImageClick}
+            style={{ cursor: 'pointer' }}
           />
 
           <div className="post_details-info">
@@ -66,8 +71,7 @@ const PostDetails = () => {
                 className="flex items-center gap-3">
                 <img
                   src={
-                    post?.creator.imageUrl ||
-                    "/assets/icons/profile-placeholder.svg"
+                    post?.creator.imageUrl || "/assets/icons/profile-placeholder.svg"
                   }
                   alt="creator"
                   className="w-8 h-8 lg:w-12 lg:h-12 rounded-full"
@@ -150,6 +154,14 @@ const PostDetails = () => {
           <GridPostList posts={relatedPosts} />
         )}
       </div>
+
+      {showModal && (
+        <div className="modal-backdrop" onClick={handleCloseModal}>
+          <div className="modal-content">
+            <img src={post?.imageUrl} alt="Enlarged" className="enlarged-image" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

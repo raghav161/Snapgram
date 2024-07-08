@@ -6,6 +6,7 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
+import { useState } from "react";
 
 import { Button } from "@/components/ui";
 import { LikedPosts } from "@/_root/pages";
@@ -31,6 +32,7 @@ const Profile = () => {
   const { pathname } = useLocation();
 
   const { data: currentUser } = useGetUserById(id || "");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!currentUser)
     return (
@@ -39,16 +41,38 @@ const Profile = () => {
       </div>
     );
 
+  const handleImageClick = () => {
+    if (currentUser.imageUrl) {
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="profile-container">
+      { isModalOpen && (
+        <div className="modal-overlay" onClick={handleCloseModal}>
+          <div className="modal-content">
+            <img
+              src={currentUser.imageUrl}
+              alt="profile"
+              className="w-96 h-auto"
+            />
+          </div>
+        </div>
+      )}
       <div className="profile-inner_container">
         <div className="flex xl:flex-row flex-col max-xl:items-center flex-1 gap-7">
           <img
-            src={
-              currentUser.imageUrl || "/assets/icons/profile-placeholder.svg"
-            }
+            src={ currentUser.imageUrl || "/assets/icons/profile-placeholder.svg"}
             alt="profile"
-            className="w-28 h-28 lg:h-36 lg:w-36 rounded-full"
+            className={`w-28 h-28 lg:h-36 lg:w-36 rounded-full ${
+              currentUser.imageUrl && "cursor-pointer"
+            }`}
+            onClick={handleImageClick}
           />
           <div className="flex flex-col flex-1 justify-between md:mt-2">
             <div className="flex flex-col w-full">

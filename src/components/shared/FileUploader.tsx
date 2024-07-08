@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
-
 import { Button } from "@/components/ui";
 import { convertFileToUrl } from "@/lib/utils";
 
@@ -12,7 +11,7 @@ type FileUploaderProps = {
 const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
   const [file, setFile] = useState<File[]>([]);
   const [fileUrl, setFileUrl] = useState<string>(mediaUrl);
-  // const [fileType, setFileType] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
@@ -21,7 +20,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
       setFileUrl(convertFileToUrl(acceptedFiles[0]));
       // setFileType(acceptedFiles[0].type);
     },
-    [file]
+    [fieldChange]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -32,41 +31,66 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
     },
   });
 
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
-    <div
-      {...getRootProps()}
-      className="flex flex-center flex-col bg-dark-3 rounded-xl cursor-pointer">
-      <input {...getInputProps()} className="cursor-pointer" />
+    <div>
+      <div
+        {...getRootProps()}
+        className="flex flex-center flex-col bg-dark-3 rounded-xl cursor-pointer">
+        <input {...getInputProps()} className="cursor-pointer" />
 
-      {fileUrl ? (
-        <>
-          <div className="flex flex-1 justify-center w-full p-5 lg:p-10">
-            <img src={fileUrl} alt="image" className="file_uploader-img" />
-            {/* {fileType.startsWith("image/") ? (
-              <img src={fileUrl} alt="image" className="file_uploader-img" />
-            ) : (
-              <video src={fileUrl} controls className="file_uploader-video" />
-            )} */}
+        {fileUrl ? (
+          <>
+            <div className="flex flex-1 justify-center w-full p-5 lg:p-10">
+              <img
+                src={fileUrl}
+                alt="image"
+                className="file_uploader-img"
+                onClick={handleImageClick}
+                style={{ cursor: 'pointer' }}
+              />
+              {/* {fileType.startsWith("image/") ? (
+                <img src={fileUrl} alt="image" className="file_uploader-img" />
+              ) : (
+                <video src={fileUrl} controls className="file_uploader-video" />
+              )} */}
+            </div>
+            <p className="file_uploader-label">Click or drag to replace</p>
+          </>
+        ) : (
+          <div className="file_uploader-box">
+            <img
+              src="/assets/icons/file-upload.svg"
+              width={96}
+              height={77}
+              alt="file upload"
+            />
+
+            <h3 className="base-medium text-light-2 mb-2 mt-6">
+              Drag photo here
+            </h3>
+            <p className="text-light-4 small-regular mb-6">SVG, PNG, JPG</p>
+
+            <Button type="button" className="shad-button_dark_4">
+              Select from computer
+            </Button>
           </div>
-          <p className="file_uploader-label">Click or drag to replace</p>
-        </>
-      ) : (
-        <div className="file_uploader-box">
-          <img
-            src="/assets/icons/file-upload.svg"
-            width={96}
-            height={77}
-            alt="file upload"
-          />
+        )}
+      </div>
 
-          <h3 className="base-medium text-light-2 mb-2 mt-6">
-            Drag photo here
-          </h3>
-          <p className="text-light-4 small-regular mb-6">SVG, PNG, JPG</p>
-
-          <Button type="button" className="shad-button_dark_4">
-            Select from computer
-          </Button>
+      {showModal && (
+        <div className="modal-backdrop" onClick={handleCloseModal}>
+          <div className="modal-content">
+            <img src={fileUrl} alt="Enlarged" className="enlarged-image" />
+          </div>
         </div>
       )}
     </div>

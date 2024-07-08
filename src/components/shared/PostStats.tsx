@@ -67,9 +67,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     setIsSaved(true);
   };
 
-  const containerStyles = location.pathname.startsWith("/profile")
-    ? "w-full"
-    : "";
+  const containerStyles = location.pathname.startsWith("/profile") ? "w-full" : "";
 
   return (
     <div
